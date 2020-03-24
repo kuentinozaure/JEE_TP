@@ -6,11 +6,11 @@
 	 version="4.0">
     
     <welcome-file-list>
-        <welcome-file>page2.html</welcome-file>
+        <welcome-file>backoffice.html</welcome-file>
         <!--<welcome-file>generationtableau.jsp</welcome-file>-->
     </welcome-file-list>
 
-<!--    <servlet>
+   <servlet>
         <description></description>
         <display-name>Generation Tableau</display-name>
         <servlet-name>generationTableau</servlet-name>
@@ -30,12 +30,12 @@
             <param-name>pas</param-name>
             <param-value>String</param-value>
         </init-param>
-    </servlet>-->
+    </servlet>
     
-    <servlet>
+<!--    <servlet>
         <servlet-name>generationTableau</servlet-name>
         <jsp-file>generationTableau.jsp</jsp-file>
-   </servlet>
+   </servlet>-->
    
     <servlet-mapping>
         <servlet-name>generationTableau</servlet-name>

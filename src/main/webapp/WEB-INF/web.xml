@@ -6,7 +6,7 @@
 	 version="4.0">
     
     <welcome-file-list>
-        <welcome-file>page2.html</welcome-file>
+        <welcome-file>backoffice.html</welcome-file>
         <!--<welcome-file>generationtableau.jsp</welcome-file>-->
     </welcome-file-list>
 

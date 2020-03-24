@@ -25,7 +25,7 @@
                 Integer pas = Integer.parseInt(request.getParameter("pas"));
 
                 for(int i=premier; i<= dernier; i= i+pas) {
-                           out.println("<tr>");
+                            out.println("<tr>");
                             out.println("<td>");
                             out.println(i);
                             out.println("</td>");
