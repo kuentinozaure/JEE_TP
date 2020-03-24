@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'war'
+
+
+description = 'tp1'
+    group = 'com.m1ice.tp1'
+repositories {
+    jcenter()
+}
+
+dependencies {
+    providedCompile 'javax:javaee-web-api:8.0'
+    
+    testCompile     'junit:junit:4.12'
+}
