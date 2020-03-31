@@ -57,7 +57,7 @@ public class FillData extends HttpServlet {
             // Cr?ation d'une requ?te sans param?tres
             Statement ps = con.createStatement();
            
-            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('test','test','test',0,'test')");
+            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('a','a','a',0,'a')");
             ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('AUBRY','Etienne','lebogoss77.com',1,'b')");
             ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('FRANCE','julien','allezlom13@gmail.com',0,'c')");
             

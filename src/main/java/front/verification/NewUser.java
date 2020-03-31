@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tp1;
+package front.verification;
 
+import tp1.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -27,8 +27,8 @@ import javax.sql.DataSource;
  *
  * @author AdminEtu
  */
-@WebServlet(name = "Auth", urlPatterns = {"/Auth"})
-public class Auth extends HttpServlet {
+@WebServlet(name = "newUser", urlPatterns = {"/newUser"})
+public class NewUser extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,16 +40,18 @@ public class Auth extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException, NamingException {
+            throws ServletException, IOException, NamingException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         
         Connection con = null;
         try ( PrintWriter out = response.getWriter()) {
             
-            String email = request.getParameter("login");
+            String nom = request.getParameter("nom");
+            String prenom = request.getParameter("prenom");
+            String mail = request.getParameter("email");
             String mdp = request.getParameter("mdp");
             
-            // Chargement du service de nommage
+             // Chargement du service de nommage
             Context initCtx=null;
             try {
                 initCtx = new InitialContext();
@@ -62,23 +64,36 @@ public class Auth extends HttpServlet {
             DataSource ds = (DataSource)refRecherchee;
             con = ds.getConnection();
             
-            
-            Statement ps2 = con.createStatement();
-            ResultSet rs = ps2.executeQuery("SELECT * FROM utilisateurs where mdp='test' and email='test'");
-            // WHERE mdp='"+mdp+"' AND email='"+email+"'");
-            rs.next();
-            /* TODO output your page here. You may use following sample code. */
+            // Cr?ation d'une requ?te sans param?tres
+            Statement ps = con.createStatement();
+           
+            if (nom.isEmpty() || prenom.isEmpty() || mail.isEmpty() || mdp.isEmpty()){
+                            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Auth</title>");           
+            out.println("<title>InsertUser</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("SELECT COUNT(*) as TOTAL FROM utilisateurs where mdp=\""+mdp+"\" AND email=\""+email+"\"");
-            out.println(rs.getString("ID"));
-            out.println("<h1></h1>");
+            out.println("<h1>Please provide all field</h1>");
+            out.println("<a href='/front/login.html'>return to home</a>");
             out.println("</body>");
             out.println("</html>");
+            } else {
+            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege) VALUES ('"+nom+"','"+prenom+"','"+mail+"',0)");
+            
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>InsertUser</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Your user is inserted</h1>");
+            out.println("<a href='/front/login.html'>return to home</a>");
+            out.println("</body>");
+            out.println("</html>");
+            }
+
         }
         finally {
             if (con != null) {
@@ -101,10 +116,10 @@ public class Auth extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(Auth.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-            Logger.getLogger(Auth.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NewUser.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(NewUser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -121,10 +136,10 @@ public class Auth extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(Auth.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-            Logger.getLogger(Auth.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NewUser.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(NewUser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
