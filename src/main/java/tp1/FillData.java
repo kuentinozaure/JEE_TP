@@ -36,8 +36,9 @@ public class FillData extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
+        Connection con = null;
         try ( PrintWriter out = response.getWriter()) {
             
             // Chargement du service de nommage
@@ -51,14 +52,21 @@ public class FillData extends HttpServlet {
             // Connexion ? la base de donn?es enregistr?e dans le serveur de nom sous le nom "sample"
             Object refRecherchee = initCtx.lookup("jdbc/__default");
             DataSource ds = (DataSource)refRecherchee;
-            Connection con = ds.getConnection();
+            con = ds.getConnection();
             
             // Cr?ation d'une requ?te sans param?tres
             Statement ps = con.createStatement();
            
-            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege) VALUES ('DUPOND','Fabrice','fabricedupontdu77@gmail.com',0)");
-            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege) VALUES ('AUBRY','Etienne','lebogoss77.com',1)");
-            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege) VALUES ('FRANCE','julien','allezlom13@gmail.com',2)");
+            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('test','test','test',0,'test')");
+            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('AUBRY','Etienne','lebogoss77.com',1,'b')");
+            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('FRANCE','julien','allezlom13@gmail.com',0,'c')");
+            
+            
+            // ps.executeUpdate("INSERT INTO service(titre,resume,categorie,unite_loc,coup_unite) VALUES ('AUBRY','Etienne','lebogoss77.com',1,'b')");
+            
+            ps.executeUpdate("INSERT INTO categories (nom,resume) VALUES ('COURS','Ceci est les cours')");
+            ps.executeUpdate("INSERT INTO categories (nom,resume) VALUES ('JARDINAGE','Ceci est le jardinage')");
+            ps.executeUpdate("INSERT INTO categories (nom,resume) VALUES ('BRICOLAGE','Ceci est les bricolage')");
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -71,12 +79,20 @@ public class FillData extends HttpServlet {
             
             out.println("</body>");
             out.println("</html>");
+            con.close();
+            
         
             
         } catch (SQLException ex) {
             //Logger.getLogger(ServletTestBDCreation.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
             //Logger.getLogger(ServletTestBDCreation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        finally {
+            if (con != null) {
+                con.close();
+            }
         }
     }
 
@@ -92,7 +108,11 @@ public class FillData extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(FillData.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -106,7 +126,11 @@ public class FillData extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(FillData.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

@@ -1,35 +1,26 @@
+package tp1;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tp1;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 
 /**
  *
- * @author JCS
+ * @author AdminEtu
  */
-@WebServlet(name = "ServletTestCreation", urlPatterns = {"/ServletTestBDCreation"})
-public class Bd extends HttpServlet {
+@WebServlet(name = "CreateUser", urlPatterns = {"/CreateUser"})
+public class CreateUser extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,61 +34,40 @@ public class Bd extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
+        Connection con = null;
         try ( PrintWriter out = response.getWriter()) {
-            
-            // Chargement du service de nommage
-            Context initCtx=null;
-            try {
-                initCtx = new InitialContext();
-            } catch (NamingException ex) {
-                System.out.println("Erreur de chargement du service de nommage");
-            } 
-            
-            // Connexion ? la base de donn?es enregistr?e dans le serveur de nom sous le nom "sample"
-            Object refRecherchee = initCtx.lookup("jdbc/__default");
-            DataSource ds = (DataSource)refRecherchee;
-            Connection con = ds.getConnection();
-            
-            // Cr?ation d'une requ?te sans param?tres
-            Statement ps = con.createStatement();
-            try
-            {
-                ps.executeUpdate("DROP TABLE CLIENT");
-            }
-            catch (Exception ex)
-            {
-                // Table d?j? existante
-                System.out.println("La table n'existait pas");
-            }
-            ps.executeUpdate("CREATE TABLE CLIENT (ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, NOM VARCHAR(30) NOT NULL UNIQUE)"); // On fait un select dans la table CUSTOMER
-
-            ps.executeUpdate("INSERT INTO CLIENT(NOM) VALUES ('DUPOND')");
-            ps.executeUpdate("INSERT INTO CLIENT(NOM) VALUES ('DURANT')");
-
-            Statement ps2 = con.createStatement();
-            ResultSet rs = ps2.executeQuery("select * from CLIENT"); // On fait un select dans la table CLIENT
-
-            
+            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ServletTestBD</title>");            
+            out.println("<title>Servlet DeleteUser</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ServletTestBD at " + request.getContextPath() + "</h1>");
             
-            // On passe toutes les lignes de la table et on affiche le champ NAME
-            while (rs.next())
-                out.println("<p>"+rs.getString("NOM")+"</p>");
+            out.println("<form action='InsertUser' method='post'>");
             
+            out.println("<label for=\"nom\">Nom :</label>");
+            out.println("<input type='text' id='nom' name='nom'>");
+            
+            out.println("<label for=\"prenom\">Prenom :</label>");
+            out.println("<input type='text' id='prenom' name='prenom'>");
+            
+            out.println("<label for=\"email\">Email :</label>");
+            out.println("<input type='text' id='email' name='email'>");
+            
+             out.println("<label for=\"mdp\">Mdp :</label>");
+            out.println("<input type='text' id='mdp' name='mdp'>");
+            
+            out.println("<button type='submit'>Ok</button>");
+            out.println("</form>");
+            out.println("<a href='backoffice.html'>return to home</a>");
             out.println("</body>");
+           
             out.println("</html>");
-        } catch (SQLException ex) {
-            //Logger.getLogger(ServletTestBDCreation.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NamingException ex) {
-            //Logger.getLogger(ServletTestBDCreation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

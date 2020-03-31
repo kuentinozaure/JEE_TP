@@ -64,8 +64,10 @@ public class InitDb extends HttpServlet {
                 // Table d?j? existante
                 System.out.println("La table n'existait pas");
             }
-            ps.executeUpdate("CREATE TABLE utilisateurs (ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, nom VARCHAR(255),prenom VARCHAR(255), email VARCHAR(255),privilege INT )");
-       
+            ps.executeUpdate("CREATE TABLE utilisateurs (ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, nom VARCHAR(255),prenom VARCHAR(255), email VARCHAR(255),privilege INT, mdp VARCHAR(255) )");
+            ps.executeUpdate("CREATE TABLE service  (ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, titre VARCHAR(255),resume VARCHAR(300), categorie VARCHAR(255),unite_loc VARCHAR(255), coup_unite FLOAT )");
+            ps.executeUpdate("CREATE TABLE categories  (ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, nom VARCHAR(255),resume VARCHAR(100))");
+            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");

@@ -8,7 +8,6 @@ package tp1;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -26,10 +25,10 @@ import javax.sql.DataSource;
 
 /**
  *
- * @author JCS
+ * @author AdminEtu
  */
-@WebServlet(name = "ServletTestCreation", urlPatterns = {"/ServletTestBDCreation"})
-public class Bd extends HttpServlet {
+@WebServlet(name = "DeleteUser", urlPatterns = {"/DeleteUser"})
+public class DeleteUser extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,9 +40,14 @@ public class Bd extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, NamingException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
+        Connection con = null;
+        
         try ( PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            
+            Integer idToDelete = Integer.parseInt(request.getParameter("idtodelete"));
             
             // Chargement du service de nommage
             Context initCtx=null;
@@ -56,48 +60,42 @@ public class Bd extends HttpServlet {
             // Connexion ? la base de donn?es enregistr?e dans le serveur de nom sous le nom "sample"
             Object refRecherchee = initCtx.lookup("jdbc/__default");
             DataSource ds = (DataSource)refRecherchee;
-            Connection con = ds.getConnection();
+            con = ds.getConnection();
             
-            // Cr?ation d'une requ?te sans param?tres
-            Statement ps = con.createStatement();
+            
+            Statement ps2 = con.createStatement();
             try
             {
-                ps.executeUpdate("DROP TABLE CLIENT");
+                ps2.executeUpdate("DELETE FROM utilisateurs WHERE ID="+ idToDelete);
             }
             catch (Exception ex)
             {
                 // Table d?j? existante
                 System.out.println("La table n'existait pas");
             }
-            ps.executeUpdate("CREATE TABLE CLIENT (ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, NOM VARCHAR(30) NOT NULL UNIQUE)"); // On fait un select dans la table CUSTOMER
-
-            ps.executeUpdate("INSERT INTO CLIENT(NOM) VALUES ('DUPOND')");
-            ps.executeUpdate("INSERT INTO CLIENT(NOM) VALUES ('DURANT')");
-
-            Statement ps2 = con.createStatement();
-            ResultSet rs = ps2.executeQuery("select * from CLIENT"); // On fait un select dans la table CLIENT
+            
 
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ServletTestBD</title>");            
+            out.println("<title>Servlet DeleteUser</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ServletTestBD at " + request.getContextPath() + "</h1>");
-            
-            // On passe toutes les lignes de la table et on affiche le champ NAME
-            while (rs.next())
-                out.println("<p>"+rs.getString("NOM")+"</p>");
-            
+            out.println("<h1>USER WITH ID " + idToDelete + " IS DELETED</h1>");
+            out.println("<a href='backoffice.html'>return to home</a>");
             out.println("</body>");
             out.println("</html>");
-        } catch (SQLException ex) {
-            //Logger.getLogger(ServletTestBDCreation.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NamingException ex) {
-            //Logger.getLogger(ServletTestBDCreation.class.getName()).log(Level.SEVERE, null, ex);
+            con.close();
+            
+        }
+        finally {
+            if (con != null) {
+                con.close();
+            }
         }
     }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -110,7 +108,13 @@ public class Bd extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (NamingException ex) {
+            Logger.getLogger(DeleteUser.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DeleteUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -124,7 +128,13 @@ public class Bd extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (NamingException ex) {
+            Logger.getLogger(DeleteUser.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DeleteUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

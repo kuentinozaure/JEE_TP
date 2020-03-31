@@ -40,8 +40,9 @@ public class GetUser extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
+        Connection con = null;
         try ( PrintWriter out = response.getWriter()) {
             
             // Chargement du service de nommage
@@ -55,7 +56,7 @@ public class GetUser extends HttpServlet {
             // Connexion ? la base de donn?es enregistr?e dans le serveur de nom sous le nom "sample"
             Object refRecherchee = initCtx.lookup("jdbc/__default");
             DataSource ds = (DataSource)refRecherchee;
-            Connection con = ds.getConnection();
+            con = ds.getConnection();
             
             
             Statement ps2 = con.createStatement();
@@ -72,6 +73,9 @@ public class GetUser extends HttpServlet {
             
             out.println("<table>");
             out.println("<tr>");
+            out.println("<td>");
+            out.println("Actions");
+            out.println("</td>");
             out.println("<td>");
             out.println("Nom");
             out.println("</td>");
@@ -91,8 +95,9 @@ public class GetUser extends HttpServlet {
                 out.println("<tr>");
                 
                 out.println("<td>");
-                out.println("<form action='InitDB' name='id' method='post'>");
+                out.println("<form action='DeleteUser' method='post'>");
                 out.println("<button type='submit'>x</button>");
+                out.println("<input type='hidden' value='"+rs.getString("ID")+"' name='idtodelete'/>");
                 out.println("</form>");
                 out.println("</td>");
                 
@@ -110,13 +115,7 @@ public class GetUser extends HttpServlet {
                 
                 out.println("<td>");
                 
-                out.println("<input type='text'  value='"+rs.getString("privilege")+"'>");
-                out.println("</input>");
-                
-                out.println("<form action='InitDB' name='premier' method='post'>");
-                out.println("<button type='submit'>mettre a jour</button>");
-                out.println("</form>");
-            
+                out.println(rs.getString("privilege"));
         
                 
                 out.println("</td>");
@@ -126,12 +125,20 @@ public class GetUser extends HttpServlet {
                 
             
             out.println("</table>");
+            out.println("<a href='backoffice.html'>return to home</a>");
             out.println("</body>");
             out.println("</html>");
+            
         } catch (SQLException ex) {
             //Logger.getLogger(ServletTestBDCreation.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
             //Logger.getLogger(ServletTestBDCreation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        finally {
+            if (con != null) {
+                con.close();
+            }
         }
     }
 
@@ -147,7 +154,11 @@ public class GetUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(GetUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -161,7 +172,11 @@ public class GetUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(GetUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
