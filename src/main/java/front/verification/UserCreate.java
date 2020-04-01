@@ -1,4 +1,4 @@
-package front.verification;
+//package front.verification;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -62,7 +62,7 @@ public class UserCreate extends HttpServlet {
             
             out.println("<button type='submit'>Ok</button>");
             out.println("</form>");
-            out.println("<a href='front/login.html'>return to home</a>");
+            out.println("<a href='login.html'>return to home</a>");
             out.println("</body>");
            
             out.println("</html>");

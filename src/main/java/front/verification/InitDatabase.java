@@ -8,8 +8,6 @@ package front.verification;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -17,7 +15,6 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,8 +26,8 @@ import javax.sql.DataSource;
  *
  * @author AdminEtu
  */
-@WebServlet(name = "Auth", urlPatterns = {"/Auth"})
-public class Verification extends HttpServlet {
+@WebServlet(name = "InitDatabase", urlPatterns = {"/InitDatabase"})
+public class InitDatabase extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,16 +39,12 @@ public class Verification extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException, NamingException {
+            throws ServletException, IOException, NamingException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         
         Connection con = null;
         try ( PrintWriter out = response.getWriter()) {
             
-            String email = request.getParameter("login");
-            String mdp = request.getParameter("mdp");
-            
-             // Chargement du service de nommage
             Context initCtx=null;
             try {
                 initCtx = new InitialContext();
@@ -63,47 +56,53 @@ public class Verification extends HttpServlet {
             Object refRecherchee = initCtx.lookup("jdbc/__default");
             DataSource ds = (DataSource)refRecherchee;
             con = ds.getConnection();
-
-            PreparedStatement prep1 = con.prepareStatement("SELECT COUNT(*) as TOTAL FROM utilisateurs where mdp=? and email=?"); 
-            prep1.setString(1, mdp);
-            prep1.setString(2, email);
             
-            ResultSet rs = prep1.executeQuery();
-            rs.next();
-            
-            RequestDispatcher dispatcher;
-            if (rs.getInt("TOTAL") == 1) {
-                request.getSession().setAttribute("identifiant", email);
-                dispatcher = request.getRequestDispatcher("accueil.jsp");
-//                out.println("<!DOCTYPE html>");
-//                out.println("<html>");
-//                out.println("<head>");
-//                out.println("<title>Login</title>");           
-//                out.println("</head>");
-//                out.println("<body>");
-//                out.println();
-//                out.println("<a href='front/accueil.jsp'>go to the homepage</a>");
-//                out.println("<a href='front/login.html'>return to home</a>");
-//                out.println();
-//                out.println("<h1></h1>");
-//                out.println("</body>");
-//                out.println("</html>");
-            } else {
-                 dispatcher = request.getRequestDispatcher("login.html");
-//                out.println("<!DOCTYPE html>");
-//                out.println("<html>");
-//                out.println("<head>");
-//                out.println("<title>mauvais login</title>");           
-//                out.println("</head>");
-//                out.println("<body>");
-//                out.println("<h1>Mauvais login</h1>");
-//                out.println("<a href='front/login.html'>return to home</a>");
-//                out.println();
-//                out.println("<h1></h1>");
-//                out.println("</body>");
-//                out.println("</html>");
+            // Cr?ation d'une requ?te sans param?tres
+            Statement ps = con.createStatement();
+            try
+            {
+                ps.executeUpdate("DROP TABLE utilisateurs");
+                ps.executeUpdate("DROP TABLE service");
+                ps.executeUpdate("DROP TABLE categories");
             }
-            dispatcher.forward(request, response);
+            catch (Exception ex)
+            {
+                // Table d?j? existante
+                System.out.println("La table n'existait pas");
+            }
+            ps.executeUpdate("CREATE TABLE utilisateurs (ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, nom VARCHAR(255),prenom VARCHAR(255), email VARCHAR(255),privilege INT, mdp VARCHAR(255) )");
+            ps.executeUpdate("CREATE TABLE service  (ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, titre VARCHAR(255),resume VARCHAR(300), categorie VARCHAR(255),unite_loc VARCHAR(255), coup_unite FLOAT )");
+            ps.executeUpdate("CREATE TABLE categories  (ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, nom VARCHAR(255),resume VARCHAR(100))");
+            
+            
+            con = ds.getConnection();
+            
+            // Cr?ation d'une requ?te sans param?tres
+            Statement ps1 = con.createStatement();
+           
+            ps1.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('LE ZERO','Toto','test',0,'toto')");
+            ps1.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('AUBRY','Etienne','lebogoss77.com',1,'b')");
+            ps1.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('FRANCE','julien','allezlom13@gmail.com',0,'c')");
+            
+            
+            // ps.executeUpdate("INSERT INTO service(titre,resume,categorie,unite_loc,coup_unite) VALUES ('AUBRY','Etienne','lebogoss77.com',1,'b')");
+            
+            ps1.executeUpdate("INSERT INTO categories (nom,resume) VALUES ('COURS','Ceci est les cours')");
+            ps1.executeUpdate("INSERT INTO categories (nom,resume) VALUES ('JARDINAGE','Ceci est le jardinage')");
+            ps1.executeUpdate("INSERT INTO categories (nom,resume) VALUES ('BRICOLAGE','Ceci est les bricolage')");
+            
+            
+            /* TODO output your page here. You may use following sample code. */
+//            out.println("<!DOCTYPE html>");
+//            out.println("<html>");
+//            out.println("<head>");
+//            out.println("<title>Servlet InitDatabase</title>");            
+//            out.println("</head>");
+//            out.println("<body>");
+//            out.println("<h1>Servlet InitDatabase at " + request.getContextPath() + "</h1>");
+//            out.println("</body>");
+//            out.println("</html>");
+              response.sendRedirect("login.html");
         }
         finally {
             if (con != null) {
@@ -126,10 +125,10 @@ public class Verification extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(Verification.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-            Logger.getLogger(Verification.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InitDatabase.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(InitDatabase.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -146,10 +145,10 @@ public class Verification extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(Verification.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-            Logger.getLogger(Verification.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InitDatabase.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(InitDatabase.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

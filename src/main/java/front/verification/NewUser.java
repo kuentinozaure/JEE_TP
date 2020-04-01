@@ -80,18 +80,19 @@ public class NewUser extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             } else {
-            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege) VALUES ('"+nom+"','"+prenom+"','"+mail+"',0)");
+            ps.executeUpdate("INSERT INTO utilisateurs(nom,prenom,email,privilege,mdp) VALUES ('"+nom+"','"+prenom+"','"+mail+"',0,'"+mdp+"')");
             
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>InsertUser</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Your user is inserted</h1>");
-            out.println("<a href='/front/login.html'>return to home</a>");
-            out.println("</body>");
-            out.println("</html>");
+            response.sendRedirect("login.html");
+//            out.println("<!DOCTYPE html>");
+//            out.println("<html>");
+//            out.println("<head>");
+//            out.println("<title>InsertUser</title>");            
+//            out.println("</head>");
+//            out.println("<body>");
+//            out.println("<h1>Your user is inserted</h1>");
+//            out.println("<a href='/front/login.html'>return to home</a>");
+//            out.println("</body>");
+//            out.println("</html>");
             }
 
         }
