@@ -89,7 +89,7 @@ public class Verification extends HttpServlet {
 //                out.println("</body>");
 //                out.println("</html>");
             } else {
-                 dispatcher = request.getRequestDispatcher("login.html");
+                 dispatcher = request.getRequestDispatcher("BadConnection.html");
 //                out.println("<!DOCTYPE html>");
 //                out.println("<html>");
 //                out.println("<head>");
