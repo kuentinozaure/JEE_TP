@@ -21,6 +21,11 @@
     </head>
     <body>
         <%
+            String id = (String)request.getSession().getAttribute("id");
+            if (id == null) {
+                response.sendRedirect(getServletConfig().getServletContext().getContextPath() + "/login.html");
+            } else {
+            
              // Chargement du service de nommage
             Context initCtx=null;
             try {
@@ -40,16 +45,20 @@
             ResultSet rs = prep1.executeQuery();
             rs.next();
             
-
+            request.getSession().setAttribute("userId", rs.getString("ID"));
+            
             
         %>
         <a href='creation_service.jsp'>Creation de service</a>
+        <a href='Reservation.jsp'>Reservation</a>
+        <a href='recherche.jsp'>Recherche</a>
+        
         <h1>Bienvenue a toi <%=rs.getString("prenom")%>,<%=rs.getString("nom")%></h1>
         <h1><%=rs.getString("email")%></h1>
         
         <%
             Statement prep2 = con.createStatement(); 
-            ResultSet rsservice = prep2.executeQuery("SELECT * FROM service");
+            ResultSet rsservice = prep2.executeQuery("SELECT * FROM service where userid="+Integer.parseInt(request.getSession().getAttribute("userId").toString()));
         %>
         
         <table>
@@ -92,3 +101,8 @@
         </table>
     </body>
 </html>
+
+<%
+    con.close();
+    }
+%>

@@ -74,6 +74,9 @@ public class Verification extends HttpServlet {
             RequestDispatcher dispatcher;
             if (rs.getInt("TOTAL") == 1) {
                 request.getSession().setAttribute("identifiant", email);
+                
+                request.getSession().setAttribute("id", "ok");
+                
                 dispatcher = request.getRequestDispatcher("accueil.jsp");
 //                out.println("<!DOCTYPE html>");
 //                out.println("<html>");
@@ -89,6 +92,7 @@ public class Verification extends HttpServlet {
 //                out.println("</body>");
 //                out.println("</html>");
             } else {
+                 request.getSession().setAttribute("id", "");
                  dispatcher = request.getRequestDispatcher("BadConnection.html");
 //                out.println("<!DOCTYPE html>");
 //                out.println("<html>");

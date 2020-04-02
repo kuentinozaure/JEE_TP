@@ -15,6 +15,10 @@
 <!DOCTYPE html>
 
 <%
+     String id = (String)request.getSession().getAttribute("id");
+            if (id == null) {
+                response.sendRedirect(getServletConfig().getServletContext().getContextPath() + "/login.html");
+            } else {
     Context initCtx=null;
             try {
                 initCtx = new InitialContext();
@@ -73,3 +77,6 @@
         </form>
     </body>
 </html>
+<%
+    }
+%>

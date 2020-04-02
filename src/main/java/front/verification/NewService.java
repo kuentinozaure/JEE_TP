@@ -54,6 +54,7 @@ public class NewService extends HttpServlet {
             String unitloc = request.getParameter("uniteloc");
             Float coupunit = Float.parseFloat(request.getParameter("coupunit"));
             
+            Integer userId = Integer.parseInt( request.getSession().getAttribute("userId").toString());
              // Chargement du service de nommage
             Context initCtx=null;
             try {
@@ -68,7 +69,7 @@ public class NewService extends HttpServlet {
             con = ds.getConnection();
 
             Statement ps1 = con.createStatement();
-            ps1.executeUpdate("INSERT INTO service(titre,resume,categorie,unite_loc,coup_unite) VALUES ('"+titre+"','"+resume+"','"+categorie+"','"+unitloc+"',"+coupunit+")");
+            ps1.executeUpdate("INSERT INTO service(titre,resume,categorie,unite_loc,coup_unite,userId) VALUES ('"+titre+"','"+resume+"','"+categorie+"','"+unitloc+"',"+coupunit+","+userId+")");
             
             response.sendRedirect("accueil.jsp");
         }
